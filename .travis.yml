@@ -1,13 +1,11 @@
 language: node_js
-
 node_js:
-        - "7"
-
+- '7'
 notifications:
-        email: false
-
+  email: false
+  slack:
+    secure: k9WTRoLKEWiNlUBs1n2yQDiu9oxgrlKYAAd/vjDi6CYA82uIzLbFeO2BFMX9od2V5HrFjvaoOscfMYdJuB1gWcUVCTnv8+NSRKsP97Lj42aEHWsRIwo2Qyj/8qfkUVDAmj1JK6qxQaKeemMKKImVF3aLnzmAlGEZefScExEWPjto8cfF4j8rjoYtcl8b2jDv9gDoh5MlYA6UbGGrQunnik8vUElKIwKf2T1eyjm11CGw7yh7D9odPEwaEJhiSO2alxJEuA+/Ow5+p0GqnVj5TO8gweUsAKLTqYYk085JLdvZWBjvKfYMYrTmVfW5H8BJLZl2AJqNOziASpAiB9Bx+ZXqe7EW6dN8MvxESBsNkhj+fvhFT9dd4k7sT8jKDMErsKq0Uz1UwLalMtTgVep+G1GijkZ62uAVeIdtkZAwD87Ox3Ap7Z3jsX2EizEQcbRv2uAwGHe43hQ5GR5K3aurqfMMgrsbsPbvEFB9KgCg/7hbkE3WJLRkpTC6hPCkAdtESHJ684GJHPorAkflgl/M+nTwNY71reBaDaqX+gC+bbh2nlI43lFSC9G5VwfnfhgZ3RtZHoisQe452f7CPkHAWSAeZbx8d7wllBrRsdJMTFuVGra0CaoFaqtCqSesMWClLNOeo5W3Rnjzq+XDeHtIDkufHc/6lDdo9yOZjJUAnvY=
 install:
-        - npm install 
-
+- npm install
 script:
-        - npm test
+- npm test

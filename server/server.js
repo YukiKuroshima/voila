@@ -14,12 +14,14 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 // use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: 'application/json' }));
 
 // basic route (http://localhost:8080)
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  res.status(200).json({ message: 'Hello!' });
 });
 
 /**
@@ -28,3 +30,8 @@ app.get('/', (req, res) => {
 
 app.listen(port);
 console.log(`Server running ${port}`);
+
+// exports module only for testing
+if (process.env.NODE_ENV === 'test') {
+  module.exports = app;
+}
