@@ -5,6 +5,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const uniqid = require('uniqid');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const Ticket = require('./models/ticket');
+
+require('dotenv').config();
 
 const app = express();
 
@@ -13,6 +18,18 @@ const app = express();
  */
 
 const port = process.env.PORT || 8080;
+
+// To avoid error of mongoose mpromise DeprecationWarning
+mongoose.Promise = global.Promise;
+
+// During testing
+if (process.env.NODE_ENV === 'test') {
+  mongoose.connect(process.env.DB_URI);
+} else if (process.env.NODE_ENV !== 'test') {
+  // Activate morgan
+  app.use(morgan('dev'));
+  mongoose.connect(process.env.DB_TEST_URI);
+}
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.json());
@@ -58,27 +75,99 @@ apiRoute.post('/tickets/:id/:key', (req, res) => {
   });
 });
 
+apiRoute.get('/tickets/setup', (req, res) => {
+  const newTicket = new Ticket({
+    id: 'TestID',
+    password: 'Test PW',
+  });
+
+  newTicket.save((err) => {
+    if (err) {
+      res.status(400).json({
+        message: err,
+      });
+    } else {
+      res.status(201).json({
+        message: 'New ticket created',
+      });
+    }
+  });
+});
+
 /**
  * GET /api/ticket/:id
  * Get unique URL
  */
 apiRoute.get('/tickets/:id', (req, res) => {
   // Check if query is an empty object
+  // //////////////
+  //   GENERATE  //
+  // //////////////
   if (Object.keys(req.query).length === 0 && req.query.constructor === Object) {
     // query is empty obj
     // Generate unique URL
     // TODO Save id and key to the DB
-    // Success
-    res.status(201).json({
+    const key = uniqid();
+    // Finc a ticket by id
+    Ticket.findOne({
       id: req.params.id,
-      key: uniqid(),
+    }, (err, ticket) => {
+      if (err) {
+        res.status(400).json({
+          id: req.params.id,
+          error: err,
+        });
+      } else if (!ticket) {
+        res.status(400).json({
+          id: req.params.id,
+          error: 'No ticket found by the id',
+        });
+      } else {
+        ticket.customers.push({
+          key,
+        });
+        ticket.save((errSave) => {
+          if (errSave) {
+            res.status(400).json({
+              id: req.params.id,
+              error: errSave,
+            });
+          } else {
+            res.status(201).json({
+              id: req.params.id,
+              key,
+              message: 'Success',
+            });
+          }
+        });
+      }
     });
+  // ///////////////
+  //     QUERY    //
+  // ///////////////
   } else {
     // Query exist
     // Find
-    // Success
-    res.status(200).json({
-      result: 'Query result',
+    Ticket.findOne({
+      id: req.params.id,
+    }, (errFind, ticket) => {
+      if (errFind) {
+        res.status(400).json({
+          id: req.params.id,
+          error: errFind,
+        });
+      } else if (!ticket) {
+        // Not found
+        res.status(400).json({
+          id: req.params.id,
+          error: 'No ticket found by the id',
+        });
+      } else {
+        // Success
+        res.status(200).json({
+          result: ticket,
+        });
+      }
     });
   }
 });
