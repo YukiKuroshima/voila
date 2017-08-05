@@ -108,51 +108,66 @@ apiRoute.get('/tickets/:id', (req, res) => {
     // Generate unique URL
     // TODO Save id and key to the DB
     const key = uniqid();
-    Ticket.findOneAndUpdate({
+    // Finc a ticket by id
+    Ticket.findOne({
       id: req.params.id,
-    }, {
-      $push: key,
-    }, {
-      new: true,
-      runValidators: true,
-    }, (err, updatedTicket) => {
+    }, (err, ticket) => {
       if (err) {
-        // When an error
         res.status(400).json({
           id: req.params.id,
-          err,
+          error: err,
+        });
+      } else if (!ticket) {
+        res.status(400).json({
+          id: req.params.id,
+          error: 'No ticket found by the id',
         });
       } else {
-        // Success
         ticket.customers.push({
           key,
-          test: 'Testing',
         });
-          // Saving parent to save child
-          ticket.save((errSave) => {
-            if (errSave) {
-              res.status(400).json({
-                id: req.params.id,
-                errSave,
-              });
-            } else {
-              res.status(201).json({
-                id: req.params.id,
-                key,
-              });
-            }
-          });
-        }
-      });
+        ticket.save((errSave) => {
+          if (errSave) {
+            res.status(400).json({
+              id: req.params.id,
+              error: errSave,
+            });
+          } else {
+            res.status(201).json({
+              id: req.params.id,
+              key,
+              message: 'Success',
+            });
+          }
+        });
+      }
+    });
   // ///////////////
   //     QUERY    //
   // ///////////////
   } else {
     // Query exist
     // Find
-    // Success
-    res.status(200).json({
-      result: 'Query result',
+    Ticket.findOne({
+      id: req.params.id,
+    }, (errFind, ticket) => {
+      if (errFind) {
+        res.status(400).json({
+          id: req.params.id,
+          error: errFind,
+        });
+      } else if (!ticket) {
+        // Not found
+        res.status(400).json({
+          id: req.params.id,
+          error: 'No ticket found by the id',
+        });
+      } else {
+        // Success
+        res.status(200).json({
+          result: ticket,
+        });
+      }
     });
   }
 });

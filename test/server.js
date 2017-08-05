@@ -28,60 +28,74 @@ describe('GET /', () => {
         done();
       });
   });
+});
+
+describe('GET /api/tickets/:id', () => {
+  // Remove all tickets before and after test
+  const ticketID = 'TestID';
+  const tickePW = 'Test PW';
+  before((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      const newTicket = new Ticket({
+        id: ticketID,
+        password: tickePW,
+      });
+
+      // Create one ticket
+      newTicket.save((errSave) => {
+        if (err) {
+          console.log(errSave);
+        } else {
+          done();
+        }
+      });
+    });
+  });
+  after((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
+  const URI = '/api/tickets/';
+  const Keys = [];
 
   describe('GET /api/tickets/:id Generate URL', () => {
-    // Remove all tickets before and after test
-    const ticketID = 'Test ID';
-    const tickePW = 'Test PW';
-    before((done) => {
-      Ticket.remove({}, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        const newTicket = new Ticket({
-          id: ticketID,
-          password: tickePW,
-        });
-
-        // Create one ticket
-        newTicket.save((errSave) => {
-          if (err) {
-            console.log(errSave);
-          } else {
-            done();
-          }
-        });
-      });
-    });
-    after((done) => {
-      Ticket.remove({}, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        done();
-      });
-    });
-
-    const URI = '/api/tickets/';
     it('should return 201', (done) => {
-      const ID = 1;
       chai.request(server)
-        .get(URI + ID)
+        .get(URI + ticketID)
         .end((err, res) => {
           res.should.have.status(201);
-          res.body.should.have.property('id').that.contain(ID);
+          res.body.should.have.property('id').that.contain(ticketID);
           res.body.should.have.property('key');
+          Keys.push(res.body.key);
+          done();
+        });
+    });
+    it('should return 400 with wrong id', (done) => {
+      const wrongID = 'AAA';
+      chai.request(server)
+        .get(URI + wrongID)
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.have.property('error').that.contain('No ticket found');
+          res.body.should.have.property('id').that.contain(wrongID);
           done();
         });
     });
     it('should return correct ID', (done) => {
-      const ID = 'AAA';
       chai.request(server)
-        .get(URI + ID)
+        .get(URI + ticketID)
         .end((err, res) => {
           res.should.have.status(201);
-          res.body.should.have.property('id').that.contain(ID);
+          res.body.should.have.property('id').that.contain(ticketID);
           res.body.should.have.property('key');
+          Keys.push(res.body.key);
           done();
         });
     });
@@ -92,6 +106,7 @@ describe('GET /', () => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
           res.body.should.have.property('key');
+          Keys.push(res.body.key);
           Ticket.count({}, (errDB, c) => {
             if (errDB) {
               console.log(errDB);
@@ -109,79 +124,81 @@ describe('GET /', () => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
           res.body.should.have.property('key');
+          Keys.push(res.body.key);
           Ticket.find({}, (errDB, ticket) => {
             if (errDB) {
-              console.log(errDB);
             } else if (!ticket) {
-              console.log('Ticket not found');
             } else {
-              console.log('Ticket found');
-              console.log(ticket);
-              console.log('Customer found');
-              console.log(ticket.customers[0]);
-              // ticket.customers.count({}, (errDBChild, c) => {
-              //   if (errDBChild) {
-              //     console.log('Customer not found');
-              //     console.log(errDBChild);
-              //   } else {
-              //     console.log('Customer  found');
-              //     console.log(c);
-              //     c.should.be.at.least(1);
-              //   }
-              //   done();
-              // });
             }
+            done();
           });
         });
     });
   });
-
   describe('GET /api/tickets/:id Query', () => {
-    // Remove all tickets before and after test
-    before((done) => {
-      Ticket.remove({}, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        done();
-      });
-    });
-
-    after((done) => {
-      Ticket.remove({}, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        done();
-      });
-    });
-    const URI = '/api/tickets/';
-    it('should have property "result"', (done) => {
+    it('should return 400 with wrong id', (done) => {
       const ID = 'AAA';
       chai.request(server)
         .get(URI + ID)
         .query({ test: 'test' })
         .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.have.property('id').that.contain(ID);
+          res.body.should.have.property('error').that.contain('No ticket found by the id');
+          done();
+        });
+    });
+    it('should return ticket', (done) => {
+      chai.request(server)
+        .get(URI + ticketID)
+        .query({ test: 'test' })
+        .end((err, res) => {
           res.should.have.status(200);
           res.body.should.have.property('result');
+          res.body.result.should.have.property('id').that.contain(ticketID);
+          res.body.result.should.have.property('password').that.contain(tickePW);
+          res.body.result.should.have.property('customers').that.to.be.an('array');
+          res.body.result.customers.should.have.lengthOf.above(1);
+          res.body.result.customers[0].should.have.property('key').that.to.be.an('String');
+          // res.body.should.have.property('ticket').that.contain(ID);
+          done();
+        });
+    });
+    it('should match all keys', (done) => {
+      chai.request(server)
+        .get(URI + ticketID)
+        .query({ test: 'test' })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('result');
+          res.body.result.should.have.property('id').that.contain(ticketID);
+          res.body.result.should.have.property('password').that.contain(tickePW);
+          res.body.result.should.have.property('customers').that.to.be.an('array');
+          res.body.result.customers.should.have.lengthOf.above(1);
+          res.body.result.customers[0].should.have.property('key').that.to.be.an('String');
+          res.body.result.customers.forEach((customer) => {
+            // check a key from a cutomer is in Keys
+            Keys.should.include(customer.key);
+          });
           done();
         });
     });
   });
+});
 
-  describe('POST /api/tickets/:id/:key"', () => {
-    const URI = '/api/tickets/';
-    it('should return 200', (done) => {
-      const ID = 1;
-      const KEY = 1;
-      chai.request(server)
-        .post(`${URI}${ID}/${KEY}`)
-        .end((err, res) => {
-          res.should.have.status(201);
-          //res.body.should.have.property('id').that.contain(ID);
-          //res.body.should.have.property('key');
-          done();
-        });
-    });
+
+describe('POST /api/tickets/:id/:key"', () => {
+  const URI = '/api/tickets/';
+  it('should return 200', (done) => {
+    const ID = 1;
+    const KEY = 1;
+    chai.request(server)
+      .post(`${URI}${ID}/${KEY}`)
+      .end((err, res) => {
+        res.should.have.status(201);
+        //res.body.should.have.property('id').that.contain(ID);
+        //res.body.should.have.property('key');
+        done();
+      });
   });
 });
