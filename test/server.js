@@ -293,7 +293,7 @@ describe('POST /api/tickets/:id/:key"', () => {
         res.body.should.have.property('message').that.contain('Success');
         Ticket.findOne({ id: ticketID }, (err, ticket) => {
           ticket.customers[index].key.should.to.eql(Keys[index]);
-          ticket.customers[index].data.should.to.eql(data);
+          ticket.customers[index].data.should.to.eql(data.data);
         });
         done();
       });
