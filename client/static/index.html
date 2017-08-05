@@ -1,13 +1,29 @@
-Test
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Job Hunt Japan</title>
 
+    </head>
+    <body>
+        <div id="app-view"></div>
 
-<div id="app-view"></div>
+        <!-- riot.js -->
+        <script src="/scripts/riot/riot.min.js"></script>
+        <script src="/scripts/riot-route/dist/route.js"></script>
 
-<script src="/scripts/riot/riot.min.js"></script>
-<script src="/dist/bundle.js"></script>
+        <!-- custom tags -->
+        <script src="/dist/bundle.js"></script>
 
-<script>
-    window.onload = () => {
-        riot.mount('div#app-view', 'app')
-    }
-</script>
+        <script>
+            window.onload = () => {
+      console.log('index mounted')
+                riot.mount('div#app-view', 'app')
+            }
+        </script>
+    </body>
+</html>
