@@ -56,22 +56,66 @@ const apiRoute = express.Router();
  * Post userdata and check id and key with DB
  */
 apiRoute.post('/tickets/:id/:key', (req, res) => {
-  // TODO Check if id and key are valid
-
-  // // if ticket id is invalid
-  // res.status(400).json({
-  //   message: 'Success',
-  // });
-
-  // // if key is invalid
-  // res.status(400).json({
-  //   message: 'Success',
-  // });
-
-  // if everything is ok
-  // TODO Save the data to DB
-  res.status(201).json({
-    message: 'Success',
+  // Check if id and key are valid
+  Ticket.findOne({
+    id: req.params.id,
+  }, (err, ticket) => {
+    if (err) {
+      res.status(400).json({
+        id: req.params.id,
+        error: err,
+      });
+    } else if (!ticket) {
+      // ticket id is invalid
+      res.status(400).json({
+        id: req.params.id,
+        error: 'No ticket found by the id',
+      });
+    } else {
+      // ticket is is valid
+      // Get data from params and save with unique key
+      // get index of customer from DB that has key of params.key
+      const customerIndex = ticket.customers.findIndex((customer) => {
+        // Get a customer with unique key
+        return customer.key === req.params.key;
+      });
+      if (customerIndex === -1) {
+        // No customer found with the key
+        res.status(400).json({
+          id: req.params.id,
+          key: req.params.key,
+          error: 'A ticket found BUT No customer found by the key',
+        });
+      } else {
+        // A customer found
+        if (!req.body.data) {
+          res.status(400).json({
+            id: req.params.id,
+            key: req.params.key,
+            error: 'A ticket found and a customer found by the key BUT no data to post',
+          });
+        } else {
+          // Save data to the customer at index
+          console.log(ticket.customers)
+          ticket.customers[customerIndex].data = req.body.data;
+          ticket.save((errSave) => {
+            if (errSave) {
+              res.status(400).json({
+                id: req.params.id,
+                key: req.params.key,
+                error: errSave,
+              });
+            } else {
+              res.status(201).json({
+                id: req.params.id,
+                key: req.params.key,
+                message: 'Success',
+              });
+            }
+          });
+        }
+      }
+    }
   });
 });
 

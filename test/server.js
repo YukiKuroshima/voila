@@ -6,6 +6,7 @@ process.env.NODE_ENV = 'test';
 
 const server = require('../server/server');
 const Ticket = require('../server/models/ticket');
+const uniqid = require('uniqid');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -65,7 +66,7 @@ describe('GET /api/tickets/:id', () => {
   const URI = '/api/tickets/';
   const Keys = [];
 
-  describe('GET /api/tickets/:id Generate URL', () => {
+  describe('Generate URL', () => {
     it('should return 201', (done) => {
       chai.request(server)
         .get(URI + ticketID)
@@ -135,7 +136,7 @@ describe('GET /api/tickets/:id', () => {
         });
     });
   });
-  describe('GET /api/tickets/:id Query', () => {
+  describe('Query', () => {
     it('should return 400 with wrong id', (done) => {
       const ID = 'AAA';
       chai.request(server)
@@ -188,16 +189,119 @@ describe('GET /api/tickets/:id', () => {
 
 
 describe('POST /api/tickets/:id/:key"', () => {
+  const Keys = [];
+  const ticketID = 'TestID';
+  const tickePW = 'Test PW';
+  before((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      const newTicket = new Ticket({
+        id: ticketID,
+        password: tickePW,
+      });
+      for (let i = 0; i < 10; i += 1) {
+        const key = uniqid();
+        newTicket.customers.push({ key });
+        Keys.push(key);
+      }
+      console.log('customers')
+      console.log(newTicket.customers)
+      console.log(Keys)
+      // Save one ticket with 10 customers
+      newTicket.save((errSave) => {
+        if (err) {
+          console.log(errSave);
+        } else {
+          console.log(newTicket)
+          done();
+        }
+      });
+    });
+  });
+  after((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
   const URI = '/api/tickets/';
-  it('should return 200', (done) => {
-    const ID = 1;
+  it('should return 400 with an invalid ticket id', (done) => {
+    const ID = 'WrongID';
     const KEY = 1;
     chai.request(server)
       .post(`${URI}${ID}/${KEY}`)
       .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('id').that.contain(ID);
+        res.body.should.have.property('error').that.contain('No ticket');
+        done();
+      });
+  });
+  it('should return 400 with an invalid URL', (done) => {
+    const KEY = 1;
+    chai.request(server)
+      .post(`${URI}${ticketID}/${KEY}`)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('id').that.contain(ticketID);
+        res.body.should.have.property('key').that.contain(KEY);
+        res.body.should.have.property('error').that.contain('No customer');
+        done();
+      });
+  });
+  it('should return 400 without data', (done) => {
+    chai.request(server)
+      .post(`${URI}${ticketID}/${Keys[0]}`)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('id').that.contain(ticketID);
+        res.body.should.have.property('key').that.contain(Keys[0]);
+        res.body.should.have.property('error').that.contain('no data to post');
+        done();
+      });
+  });
+  it('should return 200 with data', (done) => {
+    const index = 0;
+    const data = {
+      data: 'Test Data',
+    };
+    chai.request(server)
+      .post(`${URI}${ticketID}/${Keys[index]}`)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(data)
+      .end((err, res) => {
         res.should.have.status(201);
-        //res.body.should.have.property('id').that.contain(ID);
-        //res.body.should.have.property('key');
+        res.body.should.have.property('id').that.contain(ticketID);
+        res.body.should.have.property('key').that.contain(Keys[index]);
+        res.body.should.have.property('message').that.contain('Success');
+        done();
+      });
+  });
+  it('should return 200 and data saved', (done) => {
+    const index = 1;
+    const data = {
+      data: 'Test Data',
+    };
+    chai.request(server)
+      .post(`${URI}${ticketID}/${Keys[index]}`)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(data)
+      .end((err, res) => {
+        console.log(res.body);
+        res.should.have.status(201);
+        res.body.should.have.property('id').that.contain(ticketID);
+        res.body.should.have.property('key').that.contain(Keys[index]);
+        res.body.should.have.property('message').that.contain('Success');
+        Ticket.findOne({ id: ticketID }, (err, ticket) => {
+          console.log('A customer')
+          console.log(ticket.customers[index])
+          ticket.customers[index].key.should.to.eql(Keys[index]);
+          ticket.customers[index].data.should.to.eql(data);
+        });
         done();
       });
   });
