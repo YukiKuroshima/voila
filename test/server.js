@@ -206,15 +206,11 @@ describe('POST /api/tickets/:id/:key"', () => {
         newTicket.customers.push({ key });
         Keys.push(key);
       }
-      console.log('customers')
-      console.log(newTicket.customers)
-      console.log(Keys)
       // Save one ticket with 10 customers
       newTicket.save((errSave) => {
         if (err) {
           console.log(errSave);
         } else {
-          console.log(newTicket)
           done();
         }
       });
@@ -291,14 +287,11 @@ describe('POST /api/tickets/:id/:key"', () => {
       .set('content-type', 'application/x-www-form-urlencoded')
       .send(data)
       .end((err, res) => {
-        console.log(res.body);
         res.should.have.status(201);
         res.body.should.have.property('id').that.contain(ticketID);
         res.body.should.have.property('key').that.contain(Keys[index]);
         res.body.should.have.property('message').that.contain('Success');
         Ticket.findOne({ id: ticketID }, (err, ticket) => {
-          console.log('A customer')
-          console.log(ticket.customers[index])
           ticket.customers[index].key.should.to.eql(Keys[index]);
           ticket.customers[index].data.should.to.eql(data);
         });

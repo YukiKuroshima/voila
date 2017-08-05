@@ -96,7 +96,6 @@ apiRoute.post('/tickets/:id/:key', (req, res) => {
           });
         } else {
           // Save data to the customer at index
-          console.log(ticket.customers)
           ticket.customers[customerIndex].data = req.body.data;
           ticket.save((errSave) => {
             if (errSave) {
