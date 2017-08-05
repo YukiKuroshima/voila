@@ -8,7 +8,7 @@ const Schema = mongoose.Schema;
 
 const Customer = new Schema({
   // student id
-  id: {
+  data: {
     type: String,
   },
   // key used in URL
