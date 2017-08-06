@@ -1,6 +1,9 @@
 {
   "name": "qrcode",
   "version": "1.0.0",
+  "engines": {
+      "node": "8.2.1"
+    },
   "description": "",
   "dependencies": {
     "babel-core": "^6.25.0",
@@ -25,7 +28,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha",
-    "start": "node_modules/.bin/nodemon server/server.js",
+    "start": "node server/server.js",
+    "dev": "node_modules/.bin/nodemon server/server.js",
     "riot": "riot -w --type es6 ./client/app ./client/dist/bundle.js"
   },
   "repository": {
