@@ -19,7 +19,7 @@ route((a, b, c) => {
     riot.mount('div#content-tag', 'list');
   } else if (b) {
     console.log('post');
-    riot.mount('div#content-tag', 'post');
+    riot.mount('div#content-tag', 'post', { ticketId: _this.ticketId, uniqueKey: c });
   } else {
     console.log('else');
     riot.mount('div#content-tag', 'landing');
@@ -46,9 +46,7 @@ this.generateQRCode = e => {
       // Request finished. Do processing here.
       console.log('Response ' + xhr.responseText);
       // TODO Needs to be changed later
-      _this.generatedURL = `${window.location.host}/#
-                                 ${opts.ticketId}/post/
-                                 ${JSON.parse(xhr.response).key}`;
+      _this.generatedURL = `${window.location.host}/#${opts.ticketId}/post/${JSON.parse(xhr.response).key}`;
       _this.update();
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
       console.log('Response ' + xhr.responseText);
@@ -69,6 +67,37 @@ riot.tag2('list', '<h1>list</h1>', '', '', function(opts) {
 });
 
 
-riot.tag2('post', '<h1>post</h1>', '', '', function(opts) {
+riot.tag2('post', '<h1>POST data to ticket ID: {opts.ticketId} Unique: {opts.uniqueKey}</h1> <h2>URL: {generatedURL}</h2> <input ref="data" placeholder="data"> <button onclick="{postData}">Submit</button>', '', '', function(opts) {
+var _this = this;
+
+// let generatedURL = '';
+
+this.postData = e => {
+  const URL = `/api/tickets/${opts.ticketId}/${opts.uniqueKey}`;
+  const xhr = new XMLHttpRequest();
+  console.log(`XMLHttp ${URL}`);
+  console.log(`postData clicked ${_this.refs.data.value}`);
+
+  xhr.open('POST', URL, true);
+
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
+      // Request finished. Do processing here.
+      console.log('Response ' + xhr.responseText);
+      // TODO Needs to be changed later
+      _this.generatedURL = `${window.location.host}/#
+                                 ${opts.ticketId}/post/
+                                 ${JSON.parse(xhr.response).key}`;
+      _this.update();
+    } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
+      console.log('Response ' + xhr.responseText);
+    } else {
+      console.log('Unknown status Response ' + xhr.responseText);
+    }
+  };
+  xhr.send(`data=${_this.refs.data.value}`);
+};
 });
 
