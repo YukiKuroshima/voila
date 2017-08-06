@@ -25,7 +25,7 @@
             // Request finished. Do processing here.
             console.log('Response ' + xhr.responseText)
             // TODO Needs to be changed later
-            this.generatedURL = `${ window.location.host }/#${ opts.ticketId }/post/${ JSON.parse(xhr.response).key }`;
+            this.generatedURL = `${ window.location.origin }/#${ opts.ticketId }/post/${ JSON.parse(xhr.response).key }`;
             this.generateQRCode(this.generatedURL);
             this.update();
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
