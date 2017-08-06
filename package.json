@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
+    "babel-core": "^6.25.0",
     "body-parser": "^1.17.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "mongoose": "^4.11.5",
-    "nodemon": "^1.11.0",
     "morgan": "^1.8.2",
+    "nodemon": "^1.11.0",
+    "riot": "^3.6.1",
+    "riot-route": "^3.1.2",
     "uniqid": "^4.1.1"
   },
   "devDependencies": {
@@ -21,7 +24,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha",
-    "start": "node_modules/.bin/nodemon server/server.js"
+    "start": "node_modules/.bin/nodemon server/server.js",
+    "riot": "riot -w --type es6 ./client/app ./client/dist/bundle.js"
   },
   "repository": {
     "type": "git",

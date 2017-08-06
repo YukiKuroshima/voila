@@ -18,18 +18,6 @@ chai.use(chaiHttp);
 /**
  * Testing
  */
-describe('GET /', () => {
-  const URI = '/';
-  it('should return 200', (done) => {
-    chai.request(server)
-      .get(URI)
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.have.property('message').that.contain('Hello!');
-        done();
-      });
-  });
-});
 
 describe('GET /api/tickets/:id', () => {
   // Remove all tickets before and after test

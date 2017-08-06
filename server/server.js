@@ -8,6 +8,7 @@ const uniqid = require('uniqid');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Ticket = require('./models/ticket');
+const path = require('path');
 
 require('dotenv').config();
 
@@ -37,19 +38,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: 'application/json' }));
 
+app.use(express.static(path.join(__dirname, '/../client/static')));
+app.use('/dist', express.static(path.join(__dirname, '/../client/dist')));
+app.use('/scripts', express.static(path.join(__dirname, '/../node_modules')));
 
 /**
  * Route
  */
 
-// basic route (http://localhost:8080)
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello!' });
-});
-
 // Create an instance for API rotue
 const apiRoute = express.Router();
-
 
 /**
  * POST /api/ticket/:id/:key
