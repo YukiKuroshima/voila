@@ -27,12 +27,12 @@ route((a, b, c) => {
 });
 });
 
-riot.tag2('gen', '<h1>gen Ticket ID: {opts.ticketId}</h1> <h2>URL: {generatedURL}</h2> <button onclick="{generateQRCode}">Next QR Code</button>', '', '', function(opts) {
+riot.tag2('gen', '<h1>gen Ticket ID: {opts.ticketId}</h1> <h2>URL: {generatedURL}</h2> <div id="placeHolder"></div> <button onclick="{generateURL}">Next QR Code</button>', '', '', function(opts) {
 var _this = this;
 
 let generatedURL = '';
 
-this.generateQRCode = e => {
+this.generateURL = e => {
   const URL = `/api/tickets/${opts.ticketId}`;
   const xhr = new XMLHttpRequest();
   console.log(`XMLHttp ${URL}`);
@@ -47,6 +47,7 @@ this.generateQRCode = e => {
       console.log('Response ' + xhr.responseText);
       // TODO Needs to be changed later
       _this.generatedURL = `${window.location.host}/#${opts.ticketId}/post/${JSON.parse(xhr.response).key}`;
+      _this.generateQRCode(_this.generatedURL);
       _this.update();
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
       console.log('Response ' + xhr.responseText);
@@ -55,6 +56,16 @@ this.generateQRCode = e => {
     }
   };
   xhr.send();
+};
+
+this.generateQRCode = uniqueURL => {
+  console.log(uniqueURL);
+  var typeNumber = 0;
+  var errorCorrectionLevel = 'L';
+  var qr = qrcode(typeNumber, errorCorrectionLevel);
+  qr.addData(uniqueURL);
+  qr.make();
+  document.getElementById('placeHolder').innerHTML = qr.createImgTag();
 };
 });
 
