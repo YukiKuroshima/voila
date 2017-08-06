@@ -1,13 +1,10 @@
 <post>
     <h1>POST data to ticket  ID: { opts.ticketId } Unique: { opts.uniqueKey }</h1>
     
-    <h2>URL: { generatedURL }</h2>
-
     <input ref="data" placeholder="data">
     <button onclick={ postData } >Submit</button>
 
     <script type='es6'>
-      // let generatedURL = '';
 
       this.postData = (e) => {
         const URL = `/api/tickets/${ opts.ticketId }/${ opts.uniqueKey }`;

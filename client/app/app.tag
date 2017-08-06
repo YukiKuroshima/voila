@@ -24,7 +24,7 @@
           riot.mount('div#content-tag', 'gen', { ticketId: this.ticketId })
         } else if (b === 'list') {
           console.log('list')
-          riot.mount('div#content-tag', 'list')
+          riot.mount('div#content-tag', 'list', { ticketId: this.ticketId })
         } else if (b){
           console.log('post')
           riot.mount('div#content-tag', 'post', { ticketId: this.ticketId, uniqueKey: c })
