@@ -1,4 +1,10 @@
 <app>
+
+    <li><a href="#{ ticketId }/gen">Check in</a></li>
+    <li><a href="#{ ticketId }/list">Show list</a></li>
+    <li><a href="#{ ticketId }/post">Test Post</a></li>
+    <li><a href="#landing">Landing</a></li>
+
     <h1>Ticket ID: { ticketId }</h1>
     <div id="content-tag"></div>
 
@@ -10,9 +16,9 @@
         route.start(true)
       })
 
-      route((a, b) => {
+      route((a, b, c) => {
 
-        console.log('a ' + a + ' b ' + b)
+        console.log('a ' + a + ' b ' + b + ' c ' + c)
         if (b === 'gen') {
           console.log('gen')
           riot.mount('div#content-tag', 'gen', { ticketId: this.ticketId })
