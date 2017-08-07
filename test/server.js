@@ -282,7 +282,269 @@ describe('POST /api/tickets/:id/:key"', () => {
         Ticket.findOne({ id: ticketID }, (err, ticket) => {
           ticket.customers[index].key.should.to.eql(Keys[index]);
           ticket.customers[index].data.should.to.eql(data.data);
+          done();
         });
+      });
+  });
+});
+describe('POST /api/tickets/"', () => {
+  before((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
+  after((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
+  const URI = '/api/tickets/';
+  it('should return 400 without id', (done) => {
+    const ticket = {
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide an id');
+        done();
+      });
+  });
+  it('should return 400 with empty id', (done) => {
+    const ticket = {
+      id: '',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide an id');
+        done();
+      });
+  });
+  it('should return 400 without password', (done) => {
+    const ticket = {
+      id: 'myID',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide a password');
+        done();
+      });
+  });
+  it('should return 400 with empty password', (done) => {
+    const ticket = {
+      id: 'myID',
+      password: '',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide a password');
+        done();
+      });
+  });
+  it('should return 400 if ID includes a white space ', (done) => {
+    const ticket = {
+      id: 'my ID',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('No whitespace in id');
+        done();
+      });
+  });
+  it('should return 201', (done) => {
+    const ticket = {
+      id: 'myid',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(201);
+        res.body.should.have.property('message').that.contain('Success');
+        done();
+      });
+  });
+  it('should return 400 with duplicate id', (done) => {
+    const ticket = {
+      id: 'myid',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('duplicate');
+        done();
+      });
+  });
+});
+describe('POST /api/tickets/auth', () => {
+  const id = 'TestID';
+  const password = 'TestPW';
+  before((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const newTicket = new Ticket({
+          id,
+          password,
+        });
+        newTicket.save((err) => {
+          if (err) {
+            console.log(err.message);
+          }
+        });
+      }
+      done();
+    });
+  });
+  after((done) => {
+    Ticket.remove({}, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
+  const URI = '/api/tickets/auth';
+  it('should return 400 without id', (done) => {
+    const ticket = {
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide an id');
+        done();
+      });
+  });
+  it('should return 400 with empty id', (done) => {
+    const ticket = {
+      id: '',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide an id');
+        done();
+      });
+  });
+  it('should return 400 without password', (done) => {
+    const ticket = {
+      id: 'myid',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide a password');
+        done();
+      });
+  });
+  it('should return 400 with empty password', (done) => {
+    const ticket = {
+      id: 'myid',
+      password: '',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Please provide a password');
+        done();
+      });
+  });
+  it('should return 400 with a wrong id', (done) => {
+    const ticket = {
+      id: 'myid',
+      password: 'a',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('No ticket found by the id');
+        res.body.should.have.property('id').that.contain('myid');
+        done();
+      });
+  });
+  it('should return 400 with a wrong password', (done) => {
+    const ticket = {
+      id,
+      password: 'wrongPW',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        console.log(res.body)
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('Wrong password');
+        res.body.should.have.property('id').that.contain(id);
+        res.body.should.have.property('password').that.contain('wrongPW');
+        done();
+      });
+  });
+  it('should return 200', (done) => {
+    const ticket = {
+      id,
+      password,
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        console.log(res.body)
+        res.should.have.status(200);
+        res.body.should.have.property('message').that.contain('Enjoy your token');
+        res.body.should.have.property('token');
         done();
       });
   });
