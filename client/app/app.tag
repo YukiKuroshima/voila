@@ -8,9 +8,16 @@
     <h1>Ticket ID: { localStorage.getItem('ticketID') }</h1>
     <div id="content-tag"></div>
 
+    <!--Footer-->
+    <footer class="page-footer unique-color center-on-small-only">
+         <div id="footer-tag"></div>
+    </footer>
+    <!--/.Footer-->
+
     <script type='es6'>
 
       this.on('mount', () => {
+        riot.mount('div#footer-tag', 'footer-tag')
         console.log('app mouted')
         route.start(true)
       })
