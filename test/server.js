@@ -4,9 +4,12 @@
 
 process.env.NODE_ENV = 'test';
 
+require('dotenv').config();
+
 const server = require('../server/server');
 const Ticket = require('../server/models/ticket');
 const uniqid = require('uniqid');
+const jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -23,6 +26,7 @@ describe('GET /api/tickets/:id', () => {
   // Remove all tickets before and after test
   const ticketID = 'TestID';
   const tickePW = 'Test PW';
+  let JWT;
   before((done) => {
     Ticket.remove({}, (err) => {
       if (err) {
@@ -38,6 +42,10 @@ describe('GET /api/tickets/:id', () => {
         if (err) {
           console.log(errSave);
         } else {
+          // Assign JWT
+          JWT = jwt.sign({ id: ticketID }, process.env.secret, {
+            expiresIn: 86400,
+          });
           done();
         }
       });
@@ -55,9 +63,29 @@ describe('GET /api/tickets/:id', () => {
   const Keys = [];
 
   describe('Generate URL', () => {
+    it('should return 401 without token', (done) => {
+      chai.request(server)
+        .get(URI + ticketID)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have.property('message').that.contain('No token');
+          done();
+        });
+    });
+    it('should return 401 with a wrong token', (done) => {
+      chai.request(server)
+        .get(URI + ticketID)
+        .set('x-access-token', 'Invalid token')
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.have.property('message').that.contain('Invalid token');
+          done();
+        });
+    });
     it('should return 201', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
@@ -70,6 +98,7 @@ describe('GET /api/tickets/:id', () => {
       const wrongID = 'AAA';
       chai.request(server)
         .get(URI + wrongID)
+        .set('x-access-token', JWT)
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.have.property('error').that.contain('No ticket found');
@@ -80,6 +109,7 @@ describe('GET /api/tickets/:id', () => {
     it('should return correct ID', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
@@ -91,6 +121,7 @@ describe('GET /api/tickets/:id', () => {
     it('should be size === 1', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
@@ -109,6 +140,7 @@ describe('GET /api/tickets/:id', () => {
     it('Customer should be size > 0', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.have.property('id').that.contain(ticketID);
@@ -129,6 +161,7 @@ describe('GET /api/tickets/:id', () => {
       const ID = 'AAA';
       chai.request(server)
         .get(URI + ID)
+        .set('x-access-token', JWT)
         .query({ test: 'test' })
         .end((err, res) => {
           res.should.have.status(400);
@@ -140,6 +173,7 @@ describe('GET /api/tickets/:id', () => {
     it('should return ticket', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .query({ test: 'test' })
         .end((err, res) => {
           res.should.have.status(200);
@@ -156,6 +190,7 @@ describe('GET /api/tickets/:id', () => {
     it('should match all keys', (done) => {
       chai.request(server)
         .get(URI + ticketID)
+        .set('x-access-token', JWT)
         .query({ test: 'test' })
         .end((err, res) => {
           res.should.have.status(200);
@@ -523,7 +558,6 @@ describe('POST /api/tickets/auth', () => {
       .set('content-type', 'application/x-www-form-urlencoded')
       .send(ticket)
       .end((err, res) => {
-        console.log(res.body)
         res.should.have.status(400);
         res.body.should.have.property('message').that.contain('Wrong password');
         res.body.should.have.property('id').that.contain(id);
@@ -541,7 +575,6 @@ describe('POST /api/tickets/auth', () => {
       .set('content-type', 'application/x-www-form-urlencoded')
       .send(ticket)
       .end((err, res) => {
-        console.log(res.body)
         res.should.have.status(200);
         res.body.should.have.property('message').that.contain('Enjoy your token');
         res.body.should.have.property('token');

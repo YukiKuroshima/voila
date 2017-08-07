@@ -97,7 +97,6 @@ apiRoute.post('/tickets', (req, res) => {
  * return JWT
  */
 apiRoute.post('/tickets/auth', (req, res) => {
-  console.log('ID: ' + req.body.id + ' PW: ' +  req.body.password) 
   if (!req.body.id) {
     // Id is required to create new ticket
     return res.status(400).json({
@@ -214,6 +213,35 @@ apiRoute.post('/tickets/:id/:key', (req, res) => {
       }
     }
   });
+});
+
+/**
+ * Middleware to authenticare JSON web token
+ */
+apiRoute.use((req, res, next) => {
+  // Check if JWT is in header or params or post body
+  const token = req.body.token || req.params.token || req.headers['x-access-token'];
+  if (!token) {
+    // No token found
+    res.status(401).json({
+      message: 'No token',
+    });
+  } else {
+    // token found
+    jwt.verify(token, app.get('superSecret'), (err, decoded) => {
+      if (err) {
+        // JWT is invalid
+        res.status(401).json({
+          message: 'Invalid token',
+        });
+      } else {
+        // JWT is valid
+        // Assign decoded data (ticket ID) to req.decoded
+        req.decoded = decoded;
+        next();
+      }
+    });
+  }
 });
 
 apiRoute.get('/tickets/setup', (req, res) => {
