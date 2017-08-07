@@ -26,11 +26,12 @@ mongoose.Promise = global.Promise;
 
 // During testing
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect(process.env.DB_URI);
+  mongoose.connect(process.env.DB_TEST_URI);
+  console.log('Testing');
 } else if (process.env.NODE_ENV !== 'test') {
   // Activate morgan
   app.use(morgan('dev'));
-  mongoose.connect(process.env.DB_TEST_URI);
+  mongoose.connect(process.env.DB_URI);
 }
 
 // For JSON Web Token
@@ -85,7 +86,7 @@ apiRoute.post('/tickets', (req, res) => {
       res.status(201).json({
         message: 'Success',
         id: req.body.id,
-        password: req.body.id,
+        password: req.body.password,
       });
     }
   });

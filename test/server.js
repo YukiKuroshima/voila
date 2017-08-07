@@ -443,6 +443,36 @@ describe('POST /api/tickets/"', () => {
         done();
       });
   });
+  it('should return 400 with duplicate id', (done) => {
+    const ticket = {
+      id: 'myid',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property('message').that.contain('duplicate');
+        done();
+      });
+  });
+  it('should return 201 with a different id', (done) => {
+    const ticket = {
+      id: 'myid2',
+      password: 'password',
+    };
+    chai.request(server)
+      .post(URI)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(ticket)
+      .end((err, res) => {
+        res.should.have.status(201);
+        res.body.should.have.property('message').that.contain('Success');
+        done();
+      });
+  });
 });
 describe('POST /api/tickets/auth', () => {
   const id = 'TestID';
