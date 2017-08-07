@@ -29,10 +29,6 @@
             // Request finished. Do processing here.
             console.log('Response ' + xhr.responseText)
             // TODO Needs to be changed later
-            this.generatedURL = `${ window.location.host }/#
-                                 ${ opts.ticketId }/post/
-                                 ${ JSON.parse(xhr.response).key }`;
-            this.update();
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
             console.log('Response ' + xhr.responseText)
           } else {
@@ -44,6 +40,31 @@
 
       this.authTicket = (e) => {
         console.log('Auth clicked ')
+        const URL = `/api/tickets/auth`;
+        const xhr = new XMLHttpRequest();
+        console.log(`XMLHttp ${URL}`)
+        console.log(`postData clicked ${ this.refs.idAuth.value }`)
+        console.log(`postData clicked ${ this.refs.pwAuth.value }`)
+
+        xhr.open('POST', URL, true);
+
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = () => {
+          if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+            // Request finished. Do processing here.
+            console.log('Response ' + JSON.parse(xhr.response).token);
+            // Save the token to local storage
+            localStorage.setItem('token', JSON.parse(xhr.response).token);
+            localStorage.setItem('ticketID', this.refs.idAuth.value);
+            route(`${ this.refs.idAuth.value }/list`)
+          } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
+            console.log('Response else' + xhr.responseText)
+          } else {
+            console.log('Unknown status Response ' + xhr.responseText)
+          }
+        }
+        xhr.send(`id=${ this.refs.idAuth.value }&password=${ this.refs.pwAuth.value }`);
       }
     </script>
 </landing>

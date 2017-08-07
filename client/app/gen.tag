@@ -18,7 +18,7 @@
 
         xhr.open('GET', URL, true);
 
-        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("x-access-token", localStorage.getItem('token'));
 
         xhr.onreadystatechange = () => {
           if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {

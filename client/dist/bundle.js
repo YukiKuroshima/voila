@@ -1,7 +1,4 @@
-riot.tag2('app', '<li><a href="#{ticketId}/gen">Check in</a></li> <li><a href="#{ticketId}/list">Show list</a></li> <li><a href="#{ticketId}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <h1>Ticket ID: {ticketId}</h1> <div id="content-tag"></div>', '', '', function(opts) {
-var _this = this;
-
-this.ticketId = 'TestID';
+riot.tag2('app', '<li><a href="#{localStorage.getItem(\'ticketID\')}/gen">Check in</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/list">Show list</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <h1>Ticket ID: {ticketId}</h1> <div id="content-tag"></div>', '', '', function(opts) {
 
 this.on('mount', () => {
   console.log('app mouted');
@@ -13,13 +10,13 @@ route((a, b, c) => {
   console.log('a ' + a + ' b ' + b + ' c ' + c);
   if (b === 'gen') {
     console.log('gen');
-    riot.mount('div#content-tag', 'gen', { ticketId: _this.ticketId });
+    riot.mount('div#content-tag', 'gen', { ticketId: a });
   } else if (b === 'list') {
     console.log('list');
-    riot.mount('div#content-tag', 'list', { ticketId: _this.ticketId });
+    riot.mount('div#content-tag', 'list', { ticketId: a });
   } else if (b) {
     console.log('post');
-    riot.mount('div#content-tag', 'post', { ticketId: _this.ticketId, uniqueKey: c });
+    riot.mount('div#content-tag', 'post');
   } else {
     console.log('else');
     riot.mount('div#content-tag', 'landing');
@@ -39,7 +36,7 @@ this.generateURL = e => {
 
   xhr.open('GET', URL, true);
 
-  // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.setRequestHeader("x-access-token", localStorage.getItem('token'));
 
   xhr.onreadystatechange = () => {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
@@ -90,10 +87,6 @@ this.saveTicket = e => {
       // Request finished. Do processing here.
       console.log('Response ' + xhr.responseText);
       // TODO Needs to be changed later
-      _this.generatedURL = `${window.location.host}/#
-                                 ${opts.ticketId}/post/
-                                 ${JSON.parse(xhr.response).key}`;
-      _this.update();
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
       console.log('Response ' + xhr.responseText);
     } else {
@@ -105,6 +98,31 @@ this.saveTicket = e => {
 
 this.authTicket = e => {
   console.log('Auth clicked ');
+  const URL = `/api/tickets/auth`;
+  const xhr = new XMLHttpRequest();
+  console.log(`XMLHttp ${URL}`);
+  console.log(`postData clicked ${_this.refs.idAuth.value}`);
+  console.log(`postData clicked ${_this.refs.pwAuth.value}`);
+
+  xhr.open('POST', URL, true);
+
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+      // Request finished. Do processing here.
+      console.log('Response ' + JSON.parse(xhr.response).token);
+      // Save the token to local storage
+      localStorage.setItem('token', JSON.parse(xhr.response).token);
+      localStorage.setItem('ticketID', _this.refs.idAuth.value);
+      route(`${_this.refs.idAuth.value}/list`);
+    } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
+      console.log('Response else' + xhr.responseText);
+    } else {
+      console.log('Unknown status Response ' + xhr.responseText);
+    }
+  };
+  xhr.send(`id=${_this.refs.idAuth.value}&password=${_this.refs.pwAuth.value}`);
 };
 });
 
@@ -119,8 +137,7 @@ this.on('mount', () => {
   // console.log(`postData clicked ${ this.refs.data.value }`)
 
   xhr.open('GET', URL, true);
-
-  // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.setRequestHeader("x-access-token", localStorage.getItem('token'));
 
   xhr.onreadystatechange = () => {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
@@ -142,11 +159,20 @@ this.on('mount', () => {
 });
 
 
-riot.tag2('post', '<h1>POST data to ticket ID: {opts.ticketId} Unique: {opts.uniqueKey}</h1> <input ref="data" placeholder="data"> <button onclick="{postData}">Submit</button>', '', '', function(opts) {
+riot.tag2('post', '<h1>POST data to ticket ID: {ticketId} Unique: {uniqueKey}</h1> <input ref="data" placeholder="data"> <button onclick="{postData}">Submit</button>', '', '', function(opts) {
 var _this = this;
 
+this.on('before-mount', () => {
+  const arr = window.location.hash.split('/');
+  console.log(arr);
+  ticketId = arr[0].substring(1);
+  console.log(ticketId);
+  uniqueKey = arr[2];
+  console.log(uniqueKey);
+});
+
 this.postData = e => {
-  const URL = `/api/tickets/${opts.ticketId}/${opts.uniqueKey}`;
+  const URL = `/api/tickets/${ticketId}/${uniqueKey}`;
   const xhr = new XMLHttpRequest();
   console.log(`XMLHttp ${URL}`);
   console.log(`postData clicked ${_this.refs.data.value}`);
@@ -160,9 +186,6 @@ this.postData = e => {
       // Request finished. Do processing here.
       console.log('Response ' + xhr.responseText);
       // TODO Needs to be changed later
-      _this.generatedURL = `${window.location.host}/#
-                                 ${opts.ticketId}/post/
-                                 ${JSON.parse(xhr.response).key}`;
       _this.update();
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
       console.log('Response ' + xhr.responseText);
