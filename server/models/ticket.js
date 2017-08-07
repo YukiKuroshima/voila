@@ -14,8 +14,6 @@ const Customer = new Schema({
   // key used in URL
   key: {
     type: String,
-    required: true,
-    unique: true,
   },
 });
 

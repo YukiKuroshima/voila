@@ -1,13 +1,21 @@
 <post>
-    <h1>POST data to ticket  ID: { opts.ticketId } Unique: { opts.uniqueKey }</h1>
+    <h1>POST data to ticket  ID: { ticketId } Unique: { uniqueKey }</h1>
     
     <input ref="data" placeholder="data">
     <button onclick={ postData } >Submit</button>
 
     <script type='es6'>
+      this.on('before-mount', () => {
+        const arr = window.location.hash.split('/');
+        console.log(arr)
+        ticketId = arr[0].substring(1);
+        console.log(ticketId)
+        uniqueKey = arr[2];
+        console.log(uniqueKey)
+      })
 
       this.postData = (e) => {
-        const URL = `/api/tickets/${ opts.ticketId }/${ opts.uniqueKey }`;
+        const URL = `/api/tickets/${ ticketId }/${ uniqueKey }`;
         const xhr = new XMLHttpRequest();
         console.log(`XMLHttp ${URL}`)
         console.log(`postData clicked ${ this.refs.data.value }`)
@@ -21,9 +29,6 @@
             // Request finished. Do processing here.
             console.log('Response ' + xhr.responseText)
             // TODO Needs to be changed later
-            this.generatedURL = `${ window.location.host }/#
-                                 ${ opts.ticketId }/post/
-                                 ${ JSON.parse(xhr.response).key }`;
             this.update();
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
             console.log('Response ' + xhr.responseText)
