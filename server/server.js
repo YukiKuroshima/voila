@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Ticket = require('./models/ticket');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -32,6 +33,9 @@ if (process.env.NODE_ENV === 'test') {
   mongoose.connect(process.env.DB_TEST_URI);
 }
 
+// For JSON Web Token
+app.set('superSecret', process.env.secret);
+
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -48,6 +52,101 @@ app.use('/scripts', express.static(path.join(__dirname, '/../node_modules')));
 
 // Create an instance for API rotue
 const apiRoute = express.Router();
+
+/**
+ * POST /api/tickets
+ * Create new ticket with id and password
+ */
+apiRoute.post('/tickets', (req, res) => {
+  if (!req.body.id) {
+    // Id is required to create new ticket
+    return res.status(400).json({
+      message: 'Please provide an id',
+    });
+  } else if (!req.body.password) {
+    // Password is required to create new ticket
+    return res.status(400).json({
+      message: 'Please provide a password',
+    });
+  }
+  // Create new ticket
+  const newTicket = new Ticket({
+    id: req.body.id,
+    password: req.body.password,
+  });
+  // Save the new ticket
+  // Check if the id is unique
+  newTicket.save((err) => {
+    if (err) {
+      res.status(400).json({
+        message: err.message,
+      });
+    } else {
+      res.status(201).json({
+        message: 'Success',
+        id: req.body.id,
+        password: req.body.id,
+      });
+    }
+  });
+});
+
+/**
+ * POST /api/tickets/auth
+ * Authenticate a user with id and password 
+ * return JWT
+ */
+apiRoute.post('/tickets/auth', (req, res) => {
+  if (!req.body.id) {
+    // Id is required to create new ticket
+    return res.status(400).json({
+      message: 'Please provide an id',
+    });
+  } else if (!req.body.password) {
+    // Password is required to create new ticket
+    return res.status(400).json({
+      message: 'Please provide a password',
+    });
+  }
+  // Find a ticket
+  Ticket.findOne({
+    id: req.body.id,
+  }, (err, ticket) => {
+    if (err) {
+      // if an error occures
+      res.status(400).json({
+        message: err,
+      });
+    } else if (!ticket) {
+      // if no ticket found
+      res.status(400).json({
+        message: 'No ticket found by the id',
+        id: req.body.id,
+      });
+    } else {
+      // check if password is valid
+      if (req.body.password !== ticket.password) {
+        // invalid password
+        res.status(400).json({
+          message: 'Wrong password',
+          id: req.body.id,
+          password: req.body.password,
+        });
+      } else {
+        // valid password
+        // create JWT
+        const token = jwt.sign({ id: ticket.id }, app.get('superSecret'), {
+          expiresIn: 86400,
+          // expires in 24 hours
+        });
+        res.status(200).json({
+          message: 'Enjoy your token!',
+          token,
+        });
+      }
+    }
+  });
+});
 
 /**
  * POST /api/ticket/:id/:key
@@ -114,6 +213,35 @@ apiRoute.post('/tickets/:id/:key', (req, res) => {
       }
     }
   });
+});
+
+/**
+ * Middleware to authenticare JSON web token
+ */
+apiRoute.use((req, res, next) => {
+  // Check if JWT is in header or params or post body
+  const token = req.body.token || req.params.token || req.headers['x-access-token'];
+  if (!token) {
+    // No token found
+    res.status(401).json({
+      message: 'No token',
+    });
+  } else {
+    // token found
+    jwt.verify(token, app.get('superSecret'), (err, decoded) => {
+      if (err) {
+        // JWT is invalid
+        res.status(401).json({
+          message: 'Invalid token',
+        });
+      } else {
+        // JWT is valid
+        // Assign decoded data (ticket ID) to req.decoded
+        req.decoded = decoded;
+        next();
+      }
+    });
+  }
 });
 
 apiRoute.get('/tickets/setup', (req, res) => {

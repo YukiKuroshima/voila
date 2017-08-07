@@ -23,6 +23,10 @@ module.exports = mongoose.model('Ticket', new Schema({
   // ticket id
   id: {
     type: String,
+    match: [
+      /^\w+$/,
+      'No whitespace in id',
+    ],
     required: true,
     unique: true,
   },

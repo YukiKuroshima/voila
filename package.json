@@ -2,14 +2,15 @@
   "name": "qrcode",
   "version": "1.0.0",
   "engines": {
-      "node": "8.2.1"
-    },
+    "node": "8.2.1"
+  },
   "description": "",
   "dependencies": {
     "babel-core": "^6.25.0",
     "body-parser": "^1.17.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.2",
     "mongoose": "^4.11.5",
     "morgan": "^1.8.2",
     "nodemon": "^1.11.0",

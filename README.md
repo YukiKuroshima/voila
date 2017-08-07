@@ -2,4 +2,10 @@
 
 # voila
 
-Test
+# API List
+
+```
+POST /api/tickets             Create new ticket
+GET  /api/tickets/:id         Generate/Query
+POST /api/tickets/:id/:key"   Post data
+```
