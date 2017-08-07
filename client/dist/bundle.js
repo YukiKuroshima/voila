@@ -1,4 +1,4 @@
-riot.tag2('app', '<li><a href="#{localStorage.getItem(\'ticketID\')}/gen">Check in</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/list">Show list</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <h1>Ticket ID: {ticketId}</h1> <div id="content-tag"></div>', '', '', function(opts) {
+riot.tag2('app', '<li><a href="#{localStorage.getItem(\'ticketID\')}/gen">Check in</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/list">Show list</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <h1>Ticket ID: {localStorage.getItem(\'ticketID\')}</h1> <div id="content-tag"></div>', '', '', function(opts) {
 
 this.on('mount', () => {
   console.log('app mouted');
@@ -115,6 +115,7 @@ this.authTicket = e => {
       // Save the token to local storage
       localStorage.setItem('token', JSON.parse(xhr.response).token);
       localStorage.setItem('ticketID', _this.refs.idAuth.value);
+      riot.update();
       route(`${_this.refs.idAuth.value}/list`);
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
       console.log('Response else' + xhr.responseText);
