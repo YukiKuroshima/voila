@@ -1,15 +1,24 @@
 <gen>
-
-    <h1>gen Ticket ID: { opts.ticketId }</h1>
-    
-    <h2>URL: { generatedURL }</h2>
-
-    <div id="placeHolder"></div>
-
-    <button onclick={ generateURL } >Next QR Code</button>
+    <div class="container">
+        <div class="jumbotron">
+            <div class="text-center">
+                <h1 class="display-3">{ uniqueKey }</h1>
+                <div id="placeHolder"></div>
+                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                <button onclick={ generateURL } >Next QR Code</button>
+                <hr class="hr-width md-5 mt-5 pb-3">
+                <h4 class="display-5">How to use?</h4>
+                <p>Simply scan this code with your cellphone and go to the URL.</p>
+            </div>
+            </p>
+        </div>
+    </div>
 
     <script type='es6'>
-      let generatedURL = '';
+      this.on('mount', () => {
+        this.generateURL();
+
+      });
 
       this.generateURL = (e) => {
         const URL = `/api/tickets/${ opts.ticketId }`;
@@ -26,6 +35,7 @@
             console.log('Response ' + xhr.responseText)
             // TODO Needs to be changed later
             this.generatedURL = `${ window.location.origin }/#${ opts.ticketId }/post/${ JSON.parse(xhr.response).key }`;
+            this.uniqueKey = JSON.parse(xhr.response).key;
             this.generateQRCode(this.generatedURL);
             this.update();
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
@@ -40,7 +50,7 @@
       this.generateQRCode = (uniqueURL) => {
         console.log(uniqueURL)
         var typeNumber = 0;
-        var errorCorrectionLevel = 'L';
+        var errorCorrectionLevel = 'H';
         var qr = qrcode(typeNumber, errorCorrectionLevel);
         qr.addData(uniqueURL);
         qr.make();

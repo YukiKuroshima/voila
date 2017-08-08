@@ -28,10 +28,12 @@ route((a, b, c) => {
 riot.tag2('footer-tag', '<div class="container-fluid"> <div class="text-center"> Find me on <a href="https://github.com/YukiKuroshima/voila"> <span class="fa fa-github fa-2x"></span> </a> <a href="https://www.linkedin.com/in/yukikuroshima"> <span class="fa fa-linkedin fa-2x"></span> </a> </div> </div> <div class="footer-copyright"> <div class="container-fluid"> © 2017 Copyright: <a href="https://github.com/YukiKuroshima/voila"> Yuki Kuroshima </a> </div> </div>', 'footer-tag .fa,[data-is="footer-tag"] .fa{ margin: 5px; }', '', function(opts) {
 });
 
-riot.tag2('gen', '<h1>gen Ticket ID: {opts.ticketId}</h1> <h2>URL: {generatedURL}</h2> <div id="placeHolder"></div> <button onclick="{generateURL}">Next QR Code</button>', '', '', function(opts) {
+riot.tag2('gen', '<div class="container"> <div class="jumbotron"> <div class="text-center"> <h1 class="display-3">{uniqueKey}</h1> <div id="placeHolder"></div> <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a> <button onclick="{generateURL}">Next QR Code</button> <hr class="hr-width md-5 mt-5 pb-3"> <h4 class="display-5">How to use?</h4> <p>Simply scan this code with your cellphone and go to the URL.</p> </div> </p> </div> </div>', '', '', function(opts) {
 var _this = this;
 
-let generatedURL = '';
+this.on('mount', () => {
+  _this.generateURL();
+});
 
 this.generateURL = e => {
   const URL = `/api/tickets/${opts.ticketId}`;
@@ -48,6 +50,7 @@ this.generateURL = e => {
       console.log('Response ' + xhr.responseText);
       // TODO Needs to be changed later
       _this.generatedURL = `${window.location.origin}/#${opts.ticketId}/post/${JSON.parse(xhr.response).key}`;
+      _this.uniqueKey = JSON.parse(xhr.response).key;
       _this.generateQRCode(_this.generatedURL);
       _this.update();
     } else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
@@ -62,7 +65,7 @@ this.generateURL = e => {
 this.generateQRCode = uniqueURL => {
   console.log(uniqueURL);
   var typeNumber = 0;
-  var errorCorrectionLevel = 'L';
+  var errorCorrectionLevel = 'H';
   var qr = qrcode(typeNumber, errorCorrectionLevel);
   qr.addData(uniqueURL);
   qr.make();
@@ -71,7 +74,7 @@ this.generateQRCode = uniqueURL => {
 });
 
 
-riot.tag2('landing', '<h1>landing</h1> <h2>Create new ticket</h2> <input ref="idSave" placeholder="Enter the ticketID"> <input ref="pwSave" placeholder="Enter password"> <button onclick="{saveTicket}">Create new ticket</button> <h2>View your ticket</h2> <input ref="idAuth" placeholder="Enter the ticketID"> <input ref="pwAuth" placeholder="Enter password"> <button onclick="{authTicket}">View your ticket</button>', '', '', function(opts) {
+riot.tag2('landing', '<p class="h5 text-center mb-4">Create new ticket</p> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input ref="idSave" type="text" class="form-control"> <label>Ticket name</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input ref="pwSave" type="password" class="form-control"> <label for="defaultForm-pass">Your password</label> </div> <div class="text-center"> <button onclick="{saveTicket}" class="btn btn-default">Create</button> </div> <p class="h5 text-center mb-4">View your ticket</p> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input ref="idAuth" type="text" class="form-control"> <label>Ticket name</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input ref="pwAuth" type="password" class="form-control"> <label for="defaultForm-pass">Your password</label> </div> <div class="text-center"> <button onclick="{authTicket}" class="btn btn-default">View</button> </div>', '', '', function(opts) {
 var _this = this;
 
 this.saveTicket = e => {
