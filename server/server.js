@@ -18,7 +18,6 @@ const app = express();
 /**
  * Configuration
  */
-
 const port = process.env.PORT || 8080;
 
 // To avoid error of mongoose mpromise DeprecationWarning
