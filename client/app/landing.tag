@@ -1,18 +1,47 @@
 <landing>
-    <h1>landing</h1>
 
-    <h2>Create new ticket</h2>
-    <input ref="idSave" placeholder="Enter the ticketID">
-    <input ref="pwSave" placeholder="Enter password">
-    <button onclick={ saveTicket } >Create new ticket</button>
+<!-- New Ticket form -->
+<p class="h5 text-center mb-4">Create new ticket</p>
 
-    <h2>View your ticket</h2>
-    <input ref="idAuth" placeholder="Enter the ticketID">
-    <input ref="pwAuth" placeholder="Enter password">
-    <button onclick={ authTicket } >View your ticket</button>
+<div class="md-form">
+    <i class="fa fa-envelope prefix grey-text"></i>
+    <input ref="idSave" type="text" class="form-control">
+    <label>Ticket name</label>
+</div>
 
-    <script type='es6'>
-      this.saveTicket = (e) => {
+<div class="md-form">
+    <i class="fa fa-lock prefix grey-text"></i>
+    <input ref="pwSave" type="password" class="form-control">
+    <label for="defaultForm-pass">Your password</label>
+</div>
+
+<div class="text-center">
+    <button onclick={ saveTicket } class="btn btn-default">Create</button>
+</div>
+<!-- New Ticket form -->
+
+<!-- Auth Ticket form -->
+<p class="h5 text-center mb-4">View your ticket</p>
+
+<div class="md-form">
+    <i class="fa fa-envelope prefix grey-text"></i>
+    <input ref="idAuth" type="text" class="form-control">
+    <label>Ticket name</label>
+</div>
+
+<div class="md-form">
+    <i class="fa fa-lock prefix grey-text"></i>
+    <input ref="pwAuth" type="password" class="form-control">
+    <label for="defaultForm-pass">Your password</label>
+</div>
+
+<div class="text-center">
+    <button onclick={ authTicket } class="btn btn-default">View</button>
+</div>
+<!-- Auth Ticket form -->
+
+<script type='es6'>
+    this.saveTicket = (e) => {
         console.log('Save clicked ')
         const URL = `/api/tickets`;
         const xhr = new XMLHttpRequest();
@@ -67,5 +96,5 @@
         }
         xhr.send(`id=${ this.refs.idAuth.value }&password=${ this.refs.pwAuth.value }`);
       }
-    </script>
+</script>
 </landing>
