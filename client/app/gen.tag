@@ -4,11 +4,11 @@
             <div class="text-center">
                 <h1 class="display-3">{ uniqueKey }</h1>
                 <div id="placeHolder"></div>
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-                <button onclick={ generateURL } >Next QR Code</button>
+                <a onclick={ generateURL } class="btn btn-primary btn-lg" role="button">Next QR Code</a>
                 <hr class="hr-width md-5 mt-5 pb-3">
                 <h4 class="display-5">How to use?</h4>
                 <p>Simply scan this code with your cellphone and go to the URL.</p>
+                <a class="btn btn-info btn-lg" href="#" role="button">Learn more <i class="fa fa-eye mr-1"></i></a>
             </div>
             </p>
         </div>

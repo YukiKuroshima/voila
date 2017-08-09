@@ -21,7 +21,7 @@
             <td><h4 class="h4-responsive">{ customer.data }</h4></td>
             <td>
                 <div class="text-center">
-                    <i if={ customer.data !== undefined } class="fa fa-check fa-3x" aria-hidden="true"></i>
+                    <i if={ customer.data !== undefined } class="green-text fa fa-check fa-3x" aria-hidden="true"></i>
                 </div>
             </td>
         </tr>

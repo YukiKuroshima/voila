@@ -28,7 +28,7 @@ route((a, b, c) => {
 riot.tag2('footer-tag', '<div class="container-fluid"> <div class="text-center"> Find me on <a href="https://github.com/YukiKuroshima/voila"> <span class="fa fa-github fa-2x"></span> </a> <a href="https://www.linkedin.com/in/yukikuroshima"> <span class="fa fa-linkedin fa-2x"></span> </a> </div> </div> <div class="footer-copyright"> <div class="container-fluid"> © 2017 Copyright: <a href="https://github.com/YukiKuroshima/voila"> Yuki Kuroshima </a> </div> </div>', 'footer-tag .fa,[data-is="footer-tag"] .fa{ margin: 5px; }', '', function(opts) {
 });
 
-riot.tag2('gen', '<div class="container"> <div class="jumbotron"> <div class="text-center"> <h1 class="display-3">{uniqueKey}</h1> <div id="placeHolder"></div> <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a> <button onclick="{generateURL}">Next QR Code</button> <hr class="hr-width md-5 mt-5 pb-3"> <h4 class="display-5">How to use?</h4> <p>Simply scan this code with your cellphone and go to the URL.</p> </div> </p> </div> </div>', '', '', function(opts) {
+riot.tag2('gen', '<div class="container"> <div class="jumbotron"> <div class="text-center"> <h1 class="display-3">{uniqueKey}</h1> <div id="placeHolder"></div> <a onclick="{generateURL}" class="btn btn-primary btn-lg" role="button">Next QR Code</a> <hr class="hr-width md-5 mt-5 pb-3"> <h4 class="display-5">How to use?</h4> <p>Simply scan this code with your cellphone and go to the URL.</p> <a class="btn btn-info btn-lg" href="#" role="button">Learn more <i class="fa fa-eye mr-1"></i></a> </div> </p> </div> </div>', '', '', function(opts) {
 var _this = this;
 
 this.on('mount', () => {
@@ -134,7 +134,7 @@ this.authTicket = e => {
 };
 });
 
-riot.tag2('list', '<h1>Ticket ID: {opts.ticketId}</h1> <div class="container-fluid"> <table class="table table-respinsive table-hover"> <thead> <tr> <th><h3 class="h3-responsive">#</h3></th> <th><h3 class="h3-responsive">Unique Key</h3></th> <th><h3 class="h3-responsive">Data</h3></th> <th> <div class="text-center"> <h3 class="h3-responsive">Checked in?</h3> </div> </th> </tr> </thead> <tbody> <tr each="{customer, index in customers}"> <th scope="row"><h4 class="h4-responsive">{index+1}</h4></th> <td><h4 class="h4-responsive">{customer.key}</h4></td> <td><h4 class="h4-responsive">{customer.data}</h4></td> <td> <div class="text-center"> <i if="{customer.data !== undefined}" class="fa fa-check fa-3x" aria-hidden="true"></i> </div> </td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('list', '<h1>Ticket ID: {opts.ticketId}</h1> <div class="container-fluid"> <table class="table table-respinsive table-hover"> <thead> <tr> <th><h3 class="h3-responsive">#</h3></th> <th><h3 class="h3-responsive">Unique Key</h3></th> <th><h3 class="h3-responsive">Data</h3></th> <th> <div class="text-center"> <h3 class="h3-responsive">Checked in?</h3> </div> </th> </tr> </thead> <tbody> <tr each="{customer, index in customers}"> <th scope="row"><h4 class="h4-responsive">{index+1}</h4></th> <td><h4 class="h4-responsive">{customer.key}</h4></td> <td><h4 class="h4-responsive">{customer.data}</h4></td> <td> <div class="text-center"> <i if="{customer.data !== undefined}" class="green-text fa fa-check fa-3x" aria-hidden="true"></i> </div> </td> </tr> </tbody> </table> </div>', '', '', function(opts) {
 var _this = this;
 
 this.counter = 1;
@@ -172,7 +172,7 @@ this.on('mount', () => {
 riot.tag2('nav-tag', '', '', '', function(opts) {
 });
 
-riot.tag2('post', '<h1>POST data to ticket ID: {ticketId} Unique: {uniqueKey}</h1> <input ref="data" placeholder="data"> <button onclick="{postData}">Submit</button>', '', '', function(opts) {
+riot.tag2('post', '<div class="container"> <div class="jumbotron"> <p class="h5 text-center mb-4">Upload data</p> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input ref="data" type="text" class="form-control"> <label>Your data</label> </div> <div class="text-center"> <button onclick="{postData}" class="btn btn-default">Submit</button> </div> </div>', '', '', function(opts) {
 var _this = this;
 
 this.on('before-mount', () => {

@@ -1,8 +1,17 @@
 <post>
-    <h1>POST data to ticket  ID: { ticketId } Unique: { uniqueKey }</h1>
-    
-    <input ref="data" placeholder="data">
-    <button onclick={ postData } >Submit</button>
+<div class="container">
+    <div class="jumbotron">
+        <p class="h5 text-center mb-4">Upload data</p>
+
+        <div class="md-form">
+            <i class="fa fa-envelope prefix grey-text"></i>
+            <input ref="data" type="text" class="form-control">
+            <label>Your data</label>
+        </div>
+        <div class="text-center">
+            <button onclick={ postData } class="btn btn-default">Submit</button>
+        </div>
+    </div>
 
     <script type='es6'>
       this.on('before-mount', () => {
