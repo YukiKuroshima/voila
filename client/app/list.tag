@@ -1,11 +1,36 @@
 <list>
-    <h1>List data of ticket  ID: { opts.ticketId }</h1>
-    <div each={ customers }>
-        <h3>{ key }</h3>
-        <h3>{ data }</h3>
-    </div>
+<h1>Ticket  ID: { opts.ticketId }</h1>
+<div class="container-fluid">
+<table class="table table-respinsive table-hover">
+    <thead>
+        <tr>
+            <th><h3 class="h3-responsive">#</h3></th>
+            <th><h3 class="h3-responsive">Unique Key</h3></th>
+            <th><h3 class="h3-responsive">Data</h3></th>
+            <th>
+                <div class="text-center">
+                    <h3 class="h3-responsive">Checked in?</h3>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr each={ customer, index in customers }>
+            <th scope="row"><h4 class="h4-responsive">{ index+1 }</h4></th>
+            <td><h4 class="h4-responsive">{ customer.key }</h4></td>
+            <td><h4 class="h4-responsive">{ customer.data }</h4></td>
+            <td>
+                <div class="text-center">
+                    <i if={ customer.data !== undefined } class="fa fa-check fa-3x" aria-hidden="true"></i>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
     
+</div>
     <script type='es6'>
+      this.counter = 1;
 
       this.on('mount', () => {
         const customers = [];
