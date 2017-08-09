@@ -1,4 +1,4 @@
-riot.tag2('app', '<li><a href="#{localStorage.getItem(\'ticketID\')}/gen">Check in</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/list">Show list</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <h1>Ticket ID: {localStorage.getItem(\'ticketID\')}</h1> <div id="content-tag"></div> <footer class="page-footer unique-color center-on-small-only"> <div id="footer-tag"></div> </footer>', '', '', function(opts) {
+riot.tag2('app', '<li><a href="#{localStorage.getItem(\'ticketID\')}/gen">Check in</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/list">Show list</a></li> <li><a href="#{localStorage.getItem(\'ticketID\')}/post">Test Post</a></li> <li><a href="#landing">Landing</a></li> <div id="content-tag"></div> <footer class="page-footer unique-color center-on-small-only"> <div id="footer-tag"></div> </footer>', '', '', function(opts) {
 
 this.on('mount', () => {
   riot.mount('div#footer-tag', 'footer-tag');
@@ -172,7 +172,7 @@ this.on('mount', () => {
 riot.tag2('nav-tag', '', '', '', function(opts) {
 });
 
-riot.tag2('post', '<div class="container"> <div class="jumbotron"> <p class="h5 text-center mb-4">Upload data</p> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input ref="data" type="text" class="form-control"> <label>Your data</label> </div> <div class="text-center"> <button onclick="{postData}" class="btn btn-default">Submit</button> </div> </div>', '', '', function(opts) {
+riot.tag2('post', '<div class="container"> <div class="jumbotron"> <p class="h5 text-center mb-4">Upload data</p> <div class="md-form"> <i class="fa fa-inbox prefix grey-text"></i> <input ref="data" type="text" class="form-control"> <label>Your data</label> </div> <div class="text-center"> <button onclick="{postData}" class="btn btn-default">Submit</button> </div> </div>', '', '', function(opts) {
 var _this = this;
 
 this.on('before-mount', () => {

@@ -5,8 +5,6 @@
     <li><a href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
     <li><a href="#landing">Landing</a></li>
 
-    <h1>Ticket ID: { localStorage.getItem('ticketID') }</h1>
-
     <div id="content-tag"></div>
 
     <!--Footer-->

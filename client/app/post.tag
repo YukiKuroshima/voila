@@ -4,7 +4,7 @@
         <p class="h5 text-center mb-4">Upload data</p>
 
         <div class="md-form">
-            <i class="fa fa-envelope prefix grey-text"></i>
+            <i class="fa fa-inbox prefix grey-text"></i>
             <input ref="data" type="text" class="form-control">
             <label>Your data</label>
         </div>
