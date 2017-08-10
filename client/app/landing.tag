@@ -1,46 +1,72 @@
 <landing>
 
+<section class="introduction">
+    <div class="intro-container container white-text">
+        <h2 class="h2-responsive wow fadeInRight " data-wow-delay="0.3s">Simple</h2>
+        <h2 class="h2-responsive wow fadeInRight custom-gray" data-wow-delay="0.8s">Stylish</h2>
+        <h2 class="h2-responsive wow fadeInRight custom-gray" data-wow-delay="1.3s">Easy</h2>
+        <h2 class="h2-responsive wow fadeInRight custom-gray" data-wow-delay="2.0s">Ticketing System</h2>
+        <h1 class="h1-responsive wow fadeInRight" data-wow-delay="2.8s">
+            <strong>Voila</strong>
+            <small class="text-muted wow fadeIn white-text" data-wow-delay="4.4s">Oh! It's free, too</small>
+        </h1>
+    </div>
+</section>
+
 <!-- New Ticket form -->
-<p class="h5 text-center mb-4">Create new ticket</p>
+<div class="containter">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Placeh older</h1>
+            <hr>
+        </div>
+        <div class="col-md-6">
+            <p class="h5 text-center mb-4">Create new ticket</p>
+            <div class="md-form">
+                <i class="fa fa-envelope prefix grey-text"></i>
+                <input ref="idSave" type="text" class="form-control">
+                <label>Ticket name</label>
+            </div>
 
-<div class="md-form">
-    <i class="fa fa-envelope prefix grey-text"></i>
-    <input ref="idSave" type="text" class="form-control">
-    <label>Ticket name</label>
+            <div class="md-form">
+                <i class="fa fa-lock prefix grey-text"></i>
+                <input ref="pwSave" type="password" class="form-control">
+                <label for="defaultForm-pass">Your password</label>
+            </div>
+
+            <div class="text-center">
+                <button onclick={ saveTicket } class="btn btn-default">Create</button>
+            </div>
+            <!-- New Ticket form -->
+
+            <!-- Auth Ticket form -->
+            <p class="h5 text-center mb-4">View your ticket</p>
+
+            <div class="md-form">
+                <i class="fa fa-envelope prefix grey-text"></i>
+                <input ref="idAuth" type="text" class="form-control">
+                <label>Ticket name</label>
+            </div>
+
+            <div class="md-form">
+                <i class="fa fa-lock prefix grey-text"></i>
+                <input ref="pwAuth" type="password" class="form-control">
+                <label for="defaultForm-pass">Your password</label>
+            </div>
+
+            <div class="text-center">
+                <button onclick={ authTicket } class="btn btn-default">View</button>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="md-form">
-    <i class="fa fa-lock prefix grey-text"></i>
-    <input ref="pwSave" type="password" class="form-control">
-    <label for="defaultForm-pass">Your password</label>
-</div>
-
-<div class="text-center">
-    <button onclick={ saveTicket } class="btn btn-default">Create</button>
-</div>
-<!-- New Ticket form -->
-
 <!-- Auth Ticket form -->
-<p class="h5 text-center mb-4">View your ticket</p>
 
-<div class="md-form">
-    <i class="fa fa-envelope prefix grey-text"></i>
-    <input ref="idAuth" type="text" class="form-control">
-    <label>Ticket name</label>
-</div>
+        <script type='es6'>
+            this.on('mount', () => {
+              new WOW().init();
+            })
 
-<div class="md-form">
-    <i class="fa fa-lock prefix grey-text"></i>
-    <input ref="pwAuth" type="password" class="form-control">
-    <label for="defaultForm-pass">Your password</label>
-</div>
-
-<div class="text-center">
-    <button onclick={ authTicket } class="btn btn-default">View</button>
-</div>
-<!-- Auth Ticket form -->
-
-<script type='es6'>
     this.saveTicket = (e) => {
         console.log('Save clicked ')
         const URL = `/api/tickets`;
@@ -96,5 +122,5 @@
         }
         xhr.send(`id=${ this.refs.idAuth.value }&password=${ this.refs.pwAuth.value }`);
       }
-</script>
+        </script>
 </landing>

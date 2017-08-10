@@ -1,6 +1,6 @@
 <list>
+<div style="margin-top: 30px" class="container-fluid">
 <h1>Ticket  ID: { opts.ticketId }</h1>
-<div class="container-fluid">
 <table class="table table-respinsive table-hover">
     <thead>
         <tr>

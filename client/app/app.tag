@@ -1,9 +1,22 @@
 <app>
+<style>
+a {
+    color: #9dafc0;
+}
+</style>
 
-    <li><a href="#{ localStorage.getItem('ticketID') }/gen">Check in</a></li>
-    <li><a href="#{ localStorage.getItem('ticketID') }/list">Show list</a></li>
-    <li><a href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
-    <li><a href="#landing">Landing</a></li>
+<nav style="margin-bottom: 0px" class="navbar unique-color" role="navigation">
+    <div class="container">
+        <ul class="nav navbar-nav">
+            <li><a class="navbar-brand" href="#">Voila</a></li>
+            <li><a href="#">New Ticket</a></li>
+            <li><a href="#">Your Ticket</a></li>
+            <li><a href="#{ localStorage.getItem('ticketID') }/gen">Check in</a></li>
+            <li><a href="#{ localStorage.getItem('ticketID') }/list">Show list</a></li>
+            <li><a href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
+        </ul>
+    </div>
+</nav>
 
     <div id="content-tag"></div>
 

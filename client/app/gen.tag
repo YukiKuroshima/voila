@@ -1,5 +1,5 @@
 <gen>
-    <div class="container">
+    <div style="margin-top: 30px" class="container">
         <div class="jumbotron">
             <div class="text-center">
                 <h1 class="display-3">{ uniqueKey }</h1>
