@@ -1,7 +1,7 @@
 <app>
 <style>
 a {
-    color: grey;
+    color: #9dafc0;
 }
 </style>
 
@@ -14,7 +14,6 @@ a {
             <li><a href="#{ localStorage.getItem('ticketID') }/gen">Check in</a></li>
             <li><a href="#{ localStorage.getItem('ticketID') }/list">Show list</a></li>
             <li><a href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
-            <li><a href="#landing">Landing</a></li>
         </ul>
     </div>
 </nav>
