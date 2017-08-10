@@ -1,5 +1,6 @@
 <post>
-<div class="container">
+<div style="margin-top: 40px" class="container">
+
     <div class="jumbotron">
         <p class="h5 text-center mb-4">Upload data</p>
 
