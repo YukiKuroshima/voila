@@ -20,3 +20,11 @@ html, body {
 .intro-container {
     padding-top: 200px;
 }
+.col-lg-4 i {
+    display:block;
+    text-align:center
+}
+.col-md-4 i {
+    display:block;
+    text-align:center
+}
