@@ -50,6 +50,16 @@
             <div class="row container">
                 <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                     <p class="h5 text-center mb-4">Create new ticket</p>
+                    <div if={ errorText }>
+                        <div class="alert alert-danger" role="alert">
+                              <strong>Oops!</strong> { errorText }
+                        </div>
+                    </div>
+                    <div if={ successText }>
+                        <div class="alert alert-success" role="alert">
+                            <strong>Yay!</strong> { successText }
+                        </div>
+                    </div>
                     <div class="md-form">
                         <i class="fa fa-envelope prefix grey-text"></i>
                         <input ref="idSave" type="text" class="form-control">
@@ -69,6 +79,12 @@
 
                     <!-- Auth Ticket form -->
                     <p class="h5 text-center mb-4">View your ticket</p>
+
+                    <div if={ errorTextAuth }>
+                        <div class="alert alert-danger" role="alert">
+                              <strong>Oops!</strong> { errorTextAuth }
+                        </div>
+                    </div>
 
                     <div class="md-form">
                         <i class="fa fa-envelope prefix grey-text"></i>
@@ -99,7 +115,6 @@
             })
 
     this.saveTicket = (e) => {
-        console.log('Save clicked ')
         const URL = `/api/tickets`;
         const xhr = new XMLHttpRequest();
         console.log(`XMLHttp ${URL}`)
@@ -113,12 +128,22 @@
         xhr.onreadystatechange = () => {
           if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
             // Request finished. Do processing here.
-            console.log('Response ' + xhr.responseText)
-            // TODO Needs to be changed later
+            console.log('201 ' + xhr.responseText)
+            this.successText = 'Success! Please view your ticket by logging in below'
+            this.errorText = ''
+            this.update();
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
-            console.log('Response ' + xhr.responseText)
+            // console.log('Response ' + xhr.response)
+            console.log('400 ' + xhr.responseText)
+            console.log(JSON.parse(xhr.response).message);
+            this.errorText = this.stringifyError(JSON.parse(xhr.response).message);
+            this.successText = ''
+            this.update();
           } else {
-            console.log('Unknown status Response ' + xhr.responseText)
+            console.log('else ' + xhr.responseText)
+            this.successText = ''
+            this.alertText = JSON.parse(xhr.response).message;
+            this.update();
           }
         }
         xhr.send(`id=${ this.refs.idSave.value }&password=${ this.refs.pwSave.value }`);
@@ -147,11 +172,30 @@
             route(`${ this.refs.idAuth.value }/list`)
           } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
             console.log('Response else' + xhr.responseText)
+            this.errorTextAuth = this.stringifyError(JSON.parse(xhr.response).message);
+            this.successTextAuth = ''
+            this.update();
           } else {
             console.log('Unknown status Response ' + xhr.responseText)
+            this.errorTextAuth = JSON.parse(xhr.response).message;
+            this.successTextAuth = ''
+            this.update();
           }
         }
         xhr.send(`id=${ this.refs.idAuth.value }&password=${ this.refs.pwAuth.value }`);
       }
-        </script>
+      
+      this.stringifyError = (error) => {
+          console.log(error)
+          console.log(error.includes('duplicate'))
+        if (error.includes('duplicate')) {
+          console.log('dup')
+          return 'This ticket name is taken. Please choose another name'
+        } else if (error.includes('No ticket found by the id') || error.includes('Wrong password')) {
+          return 'Ticket name and password do not match'
+        } else {
+          return error
+        }
+      }
+    </script>
 </landing>

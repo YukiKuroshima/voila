@@ -15,6 +15,11 @@
     </div>
 
     <script type='es6'>
+      this.on('before-mount', () => {
+        if (!localStorage.getItem('ticketID')) {
+          route('#')
+        }
+      });
       this.on('mount', () => {
         this.generateURL();
 

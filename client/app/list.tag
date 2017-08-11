@@ -30,7 +30,11 @@
     
 </div>
     <script type='es6'>
-      this.counter = 1;
+      this.on('before-mount', () => {
+        if (!localStorage.getItem('ticketID')) {
+          route('#')
+        }
+      });
 
       this.on('mount', () => {
         const customers = [];

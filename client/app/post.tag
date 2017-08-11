@@ -3,6 +3,16 @@
 
     <div class="jumbotron">
         <p class="h5 text-center mb-4">Upload data</p>
+        <div if={ errorText }>
+            <div class="alert alert-danger" role="alert">
+                <strong>Oops!</strong> { errorText }
+            </div>
+        </div>
+        <div if={ successText }>
+            <div class="alert alert-success" role="alert">
+                <strong>Yay!</strong> { successText }
+            </div>
+        </div>
 
         <div class="md-form">
             <i class="fa fa-inbox prefix grey-text"></i>
@@ -38,12 +48,12 @@
           if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
             // Request finished. Do processing here.
             console.log('Response ' + xhr.responseText)
-            // TODO Needs to be changed later
+            this.successText = 'Successfully uploaded data'
             this.update();
-          } else if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 400) {
+          } else if(xhr.readyState == XMLHttpRequest.DONE) {
             console.log('Response ' + xhr.responseText)
-          } else {
-            console.log('Unknown status Response ' + xhr.responseText)
+            this.errorText = 'Something went wrong. Please let your professor know.'
+            this.update();
           }
         }
         xhr.send(`data=${ this.refs.data.value }`);

@@ -9,11 +9,10 @@ a {
     <div class="container">
         <ul class="nav navbar-nav">
             <li><a class="navbar-brand" href="#">Voila</a></li>
-            <li><a href="#">New Ticket</a></li>
-            <li><a href="#">Your Ticket</a></li>
-            <li><a href="#{ localStorage.getItem('ticketID') }/gen">Check in</a></li>
-            <li><a href="#{ localStorage.getItem('ticketID') }/list">Show list</a></li>
-            <li><a href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
+            <li><a if={ !localStorage.getItem('ticketID') } href="#">New Ticket</a></li>
+            <li><a if={ localStorage.getItem('ticketID') } href="#{ localStorage.getItem('ticketID') }/gen">Check in</a></li>
+            <li><a if={ localStorage.getItem('ticketID') } !href="#{ localStorage.getItem('ticketID') }/list">Show list</a></li>
+            <li><a if={ localStorage.getItem('ticketID') } href="#{ localStorage.getItem('ticketID') }/post">Test Post</a></li>
         </ul>
     </div>
 </nav>
