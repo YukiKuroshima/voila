@@ -50,11 +50,13 @@
             <div class="row container">
                 <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                     <p class="h5 text-center mb-4">Create new ticket</p>
-                    <div if={ errorText }>
-                        <div class="alert alert-danger" role="alert">
-                              <strong>Oops!</strong> { errorText }
-                        </div>
+                    <div if={ errorText !== "" }>
                     </div>
+                    <div class="alert alert-danger alert-dismissable">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Error!</strong>Errors 
+                    </div>
+                    <strong{ errorText }aaa </strong> 
                     <div class="md-form">
                         <i class="fa fa-envelope prefix grey-text"></i>
                         <input ref="idSave" type="text" class="form-control">
@@ -99,6 +101,12 @@
 
 
         <script type='es6'>
+            let errorText = 'aaa'
+            this.on('before-mount', () => {
+              errorText = 'bbb'
+              console.log(errorText)
+            })
+
             this.on('mount', () => {
               new WOW().init();
             })
@@ -124,10 +132,9 @@
             // console.log('Response ' + xhr.response)
             console.log('400 ' + xhr.responseText)
             console.log(JSON.parse(xhr.response).message);
-            this.errorText = this.stringifyError(JSON.parse(xhr.response).message);
-            this.update();
+            errorText = JSON.parse(xhr.response).message;
           } else {
-            console.log('else ' + xhr.responseText)
+            console.log('Unknown status Response ' + JSON.parse(xhr.response))
           }
         }
         xhr.send(`id=${ this.refs.idSave.value }&password=${ this.refs.pwSave.value }`);
@@ -162,16 +169,5 @@
         }
         xhr.send(`id=${ this.refs.idAuth.value }&password=${ this.refs.pwAuth.value }`);
       }
-      
-      this.stringifyError = (error) => {
-          console.log(error)
-          console.log(error.includes('duplicate'))
-        if (error.includes('duplicate')) {
-          console.log('dup')
-          return 'This ticket name is taken. Please choose another name'
-        } else {
-          return error
-        }
-      }
-    </script>
+        </script>
 </landing>
